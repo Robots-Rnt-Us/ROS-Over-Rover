@@ -1,0 +1,13 @@
+---
+description: ROS2 YAML parameter and accessory config conventions
+globs: roverrobotics_driver/config/**/*.yaml
+alwaysApply: false
+---
+
+# Config YAML Rules
+
+- Top-level key must be `roverrobotics_driver: ros__parameters:`.
+- Required fields per robot: `robot_type`, `comm_type`, `device_port`, kinematics (`wheel_radius`, `wheel_base`, etc.), topic names, `odom_frame_id`, `odom_child_frame_id`.
+- `robot_type` must match a supported protocol in the driver (see `.cursor/MEMORY.md`).
+- Sensor toggles belong in `accessories.yaml`, not duplicated in every robot config.
+- Copy nearest robot config and adjust values; do not strip commented optional params without reason.

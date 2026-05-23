@@ -1,0 +1,13 @@
+---
+description: Core Rover Robotics ROS2 workspace conventions
+alwaysApply: true
+---
+
+# Rover Robotics ROS2 — Project Rules
+
+- Four packages: driver, description, gazebo, input_manager. Build with colcon from a ROS 2 workspace.
+- Copy existing robot launch + config pairs; do not invent new layout patterns.
+- Driver executable: `roverrobotics_driver` (runtime node name often `roverrobotics`).
+- `librover` is vendored under `roverrobotics_driver/library/librover/` — edit in-tree, not as external dep.
+- Stable releases live on distro branches (`humble`, `jazzy`); `main` is active development.
+- Minimize scope: no drive-by refactors, no unrelated formatting, no new markdown unless requested.

@@ -1,0 +1,13 @@
+---
+description: C++ driver and librover protocol conventions
+globs: roverrobotics_driver/**/*.{cpp,hpp,h}
+alwaysApply: false
+---
+
+# C++ Driver Rules
+
+- C++17, `rclcpp`, Eigen3. Match existing naming in `roverrobotics_ros2_driver.cpp`.
+- Protocol selection is driven by `robot_type` YAML param — add new robots via protocol class + config, not hardcoded branches scattered across files.
+- New protocol sources go in `library/librover/src/` and must be listed in `CMakeLists.txt` `add_executable`.
+- Prefer extending existing protocol classes (`DifferentialRobot`, `ProProtocolObject`, etc.) over duplicating comm logic.
+- Keep odometry, cmd_vel, and TF behavior consistent with existing robots unless explicitly changing one platform.
