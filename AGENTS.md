@@ -46,6 +46,8 @@ For detailed node diagrams, coordinate frame trees, communications protocols, an
 *   [docs/architecture.md](file:///Users/aman.gupta/Documents/GitHub/roverrobotics_ros2/docs/architecture.md) — Node architecture, package layout, and global TF Trees.
 *   [docs/hardware_protocols.md](file:///Users/aman.gupta/Documents/GitHub/roverrobotics_ros2/docs/hardware_protocols.md) — Serial packet maps, checksum formulas, and VESC CAN layouts.
 *   [docs/input_manager_teleop.md](file:///Users/aman.gupta/Documents/GitHub/roverrobotics_ros2/docs/input_manager_teleop.md) — Gamepad joystick configurations, deadzones, and dynamic throttle scaling.
+*   [docs/setup_and_configuration.md](file:///Users/aman.gupta/Documents/GitHub/roverrobotics_ros2/docs/setup_and_configuration.md) — ROS dependency install sequencing and on-board VESC ID settings mapping.
+
 
 ```
 /cmd_vel ──► roverrobotics_driver ──► librover (CAN/serial/VESC)

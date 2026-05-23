@@ -36,18 +36,22 @@ Installation is made simple through two options:
 
 Clone this repo: [rover_install_scripts_ros2](https://github.com/RoverRobotics/rover_install_scripts_ros2)
 
-Then, follow the instructions in the setup script.
+If ROS 2 is not yet installed on your system, you **MUST** run the ROS 2 installer script first. Once ROS 2 is installed and sourced, run the workspace setup script.
 
-```
-
+```bash
 git clone https://github.com/RoverRobotics/rover_install_scripts_ros2
-
 cd rover_install_scripts_ros2
 
-sudo chmod 777 setup_rover.sh
+# Step 1: Install ROS 2 (If not already installed. Desktop is recommended for RViz/tools)
+chmod +x ros2_installation.sh
+./ros2_installation.sh
 
+# Step 2: Source the ROS 2 environment
+source /opt/ros/humble/setup.bash
+
+# Step 3: Run the Rover setup script
+chmod +x setup_rover.sh
 ./setup_rover.sh
-
 ```
 
   
