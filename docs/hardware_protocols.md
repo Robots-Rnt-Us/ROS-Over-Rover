@@ -15,13 +15,13 @@ graph TD
     Factory -->|pro| Pro[ProProtocolObject]
     Factory -->|zero2| Zero2[Zero2ProtocolObject]
     Factory -->|mini_2wd| Mini2WD[Mini2WDProtocolObject]
-    Factory -->|mini / miti / max / mega| Diff[DifferentialRobot]
+    Factory -->|mini, miti, max, mega| Diff[DifferentialRobot]
 
-    Pro -->|Serial @ 57600 baud| RS232_1[/dev/rover-pro]
-    Zero2 -->|Serial @ 115200 baud| RS232_2[/dev/rover-zero2]
-    Mini2WD -->|Serial @ 115200 baud| RS232_3[/dev/rover-mini2wd]
+    Pro -->|Serial @ 57600 baud| RS232_1["/dev/rover-pro"]
+    Zero2 -->|Serial @ 115200 baud| RS232_2["/dev/rover-zero2"]
+    Mini2WD -->|Serial @ 115200 baud| RS232_3["/dev/rover-mini2wd"]
     Diff -->|SocketCAN| CAN0[can0]
-    Diff -->|Serial VESC bridge| RS232_4[/dev/rover-vesc]
+    Diff -->|Serial VESC bridge| RS232_4["/dev/rover-vesc"]
 ```
 
 ---

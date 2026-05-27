@@ -11,11 +11,11 @@ The teleop control loop consists of three main stages: physical reading, config-
 ```mermaid
 flowchart TD
     subgraph Hardware [Physical Input]
-        Gamepad[PS4 / PS5 Controller]
+        Gamepad["PS4 / PS5 Controller"]
     end
 
     subgraph Linux [OS Interface]
-        dev_joy[/dev/input/jsX]
+        dev_joy["/dev/input/jsX"]
     end
 
     subgraph ROS2_Input [roverrobotics_input_manager]

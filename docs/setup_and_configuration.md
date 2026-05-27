@@ -9,11 +9,11 @@ This document provides step-by-step instructions for bringing up the software en
 Setting up the stack requires a specific order of execution. **ROS 2 must be installed and sourced natively before setting up the Rover workspace.** Running the scripts out of order will cause missing package errors and build failures.
 
 ```mermaid
-chronology
+timeline TD
     title Workspace Provisioning Sequence
-    2026-05-23 : Step 1: Install ROS 2 Base <br/> Run ros2_installation.sh to set up apt sources & download desktop/base packages.
-    2026-05-23 : Step 2: Source ROS Environment <br/> Source /opt/ros/distro/setup.bash to make colcon & ROS packages visible in terminal.
-    2026-05-23 : Step 3: Run setup_rover.sh <br/> Installs ROS package dependencies, clones bno055/rplidar, and builds the workspace.
+    Step 1 : Install ROS 2 Base : Run ros2_installation.sh to set up apt sources and download desktop/base packages.
+    Step 2 : Source ROS Environment : Source /opt/ros/distro/setup.bash to make colcon and ROS packages visible in terminal.
+    Step 3 : Run setup_rover.sh : Installs ROS package dependencies, clones bno055/rplidar, and builds the workspace.
 ```
 
 ### Step 1: Install ROS 2 Base
