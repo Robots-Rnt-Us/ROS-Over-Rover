@@ -123,3 +123,104 @@ graph TD
 *   **`odom` $\rightarrow$ `base_link`**: Broadcast by `robot_state_publisher` using wheel odometry fused with IMU (via `robot_localization` EKF nodes).
 *   **`base_link` $\rightarrow$ `chassis_link` / `payload_link`**: Static transforms set by the robot’s URDF xacro configurations inside the `roverrobotics_description` package.
 *   **`payload_link` $\rightarrow$ Sensors**: Custom configurations set up using `accessories.launch.py` and parameters from `accessories.yaml`.
+
+---
+
+## 4. ROS Graph — `mini_2wd_teleop.launch.py`
+
+For PS4/PS5 axis mapping, deadzones, and throttle scaling, see [input_manager_teleop.md](input_manager_teleop.md).
+
+This section documents the computational graph started by:
+
+```bash
+ros2 launch roverrobotics_driver mini_2wd_teleop.launch.py
+```
+
+It matches what you see in **rqt_graph** (nodes as boxes, topics on connecting arrows). Use it to verify teleop wiring without hardware connected:
+
+```bash
+ros2 run rqt_graph rqt_graph
+```
+
+### Launch composition
+
+[`mini_2wd_teleop.launch.py`](../roverrobotics_driver/launch/mini_2wd_teleop.launch.py) includes two child launches:
+
+| Included launch | Package | Brings up |
+| :--- | :--- | :--- |
+| [`mini_2wd.launch.py`](../roverrobotics_driver/launch/mini_2wd.launch.py) | `roverrobotics_driver` | Driver, URDF state publishers, optional accessories |
+| [`ps4_controller.launch.py`](../roverrobotics_driver/launch/ps4_controller.launch.py) | `roverrobotics_driver` | `joy_linux_node` + `joy_manager` teleop |
+
+Config files: [`mini_2wd_config.yaml`](../roverrobotics_driver/config/mini_2wd_config.yaml), [`ps4_controller_config.yaml`](../roverrobotics_driver/config/ps4_controller_config.yaml), [`topics.yaml`](../roverrobotics_driver/config/topics.yaml). Accessories are off by default in [`accessories.yaml`](../roverrobotics_driver/config/accessories.yaml).
+
+### Nodes (default graph)
+
+| Node name | Executable | Package |
+| :--- | :--- | :--- |
+| `roverrobotics_driver` | `roverrobotics_driver` | `roverrobotics_driver` |
+| `joint_state_publisher` | `joint_state_publisher` | `joint_state_publisher` |
+| `robot_state_publisher` | `robot_state_publisher` | `robot_state_publisher` |
+| `joy_linux_node` | `joy_linux_node` | `joy_linux` |
+| `joy_manager` | `joys_manager.py` | `roverrobotics_input_manager` |
+
+### Topic graph (rqt_graph view)
+
+Solid arrows are active connections for the default teleop stack. Dashed arrows are driver subscriptions with **no publisher** in this launch (defaults exist for Nav2/estop integrations).
+
+```mermaid
+flowchart LR
+    subgraph Teleop["ps4_controller.launch.py"]
+        JLN["joy_linux_node"]
+        JM["joy_manager"]
+    end
+
+    subgraph Robot["mini_2wd.launch.py"]
+        JSP["joint_state_publisher"]
+        RSP["robot_state_publisher"]
+        RRD["roverrobotics_driver"]
+    end
+
+    JLN -->|"/joy"| JM
+    JM -->|"/cmd_vel"| RRD
+    JSP -->|"/joint_states"| RSP
+    RSP -->|"/tf"| TF["TF listeners"]
+    RSP -->|"/tf_static"| TF
+
+    RRD -->|"/odometry/wheels"| ODOM["odometry consumers"]
+    RRD -->|"/robot_status"| STATUS["diagnostics consumers"]
+    RRD -->|"/robot_info"| INFO["info consumers"]
+    RRD -->|"rover_mini_2wd/battery_status"| BATT["battery consumers"]
+
+    RRD -.->|"/soft_estop/trigger"| ESTOP_T["no publisher in this launch"]
+    RRD -.->|"/soft_estop/reset"| ESTOP_R["no publisher in this launch"]
+    RRD -.->|"/trim_event"| TRIM["no publisher in this launch"]
+```
+
+### Data-flow summary
+
+| Topic | Type | Publisher | Subscriber(s) |
+| :--- | :--- | :--- | :--- |
+| `/joy` | `sensor_msgs/Joy` | `joy_linux_node` | `joy_manager` |
+| `/cmd_vel` | `geometry_msgs/Twist` | `joy_manager` | `roverrobotics_driver` |
+| `/joint_states` | `sensor_msgs/JointState` | `joint_state_publisher` | `robot_state_publisher` |
+| `/tf`, `/tf_static` | `tf2_msgs/TFMessage` | `robot_state_publisher` | RViz, other TF clients |
+| `/odometry/wheels` | `nav_msgs/Odometry` | `roverrobotics_driver` | *(none in this launch)* |
+| `/robot_status` | `std_msgs/Float32MultiArray` | `roverrobotics_driver` | *(none in this launch)* |
+| `/robot_info` | `std_msgs/Float32MultiArray` | `roverrobotics_driver` | *(none in this launch)* |
+| `rover_mini_2wd/battery_status` | `sensor_msgs/BatteryState` | `roverrobotics_driver` | *(none in this launch)* |
+
+**TF note:** [`mini_2wd_config.yaml`](../roverrobotics_driver/config/mini_2wd_config.yaml) sets `publish_tf: false`, so the driver does **not** broadcast `odom` → `base_link`. Only the URDF static tree from `robot_state_publisher` is published (`/tf_static` + joint-driven `/tf`).
+
+**Hardware path (not shown in rqt_graph):** `roverrobotics_driver` ↔ `/dev/rover-control` (VESC serial, `robot_type: mini_2wd`). See [hardware_protocols.md](hardware_protocols.md).
+
+### Optional nodes from `accessories.launch.py`
+
+If you set `active: true` for a sensor in [`accessories.yaml`](../roverrobotics_driver/config/accessories.yaml), rqt_graph also shows:
+
+| Node | Typical topics |
+| :--- | :--- |
+| `rplidar` | `/scan` |
+| `bno055` | `/imu/data` (remapped from `/imu`) |
+| `realsense` | `/camera/*`, depth/color image topics |
+
+Those nodes are **not** started with the default `mini_2wd_teleop` configuration.

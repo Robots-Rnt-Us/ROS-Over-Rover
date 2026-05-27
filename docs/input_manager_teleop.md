@@ -2,6 +2,8 @@
 
 This document details how gamepad input is read, mapped, and translated into ROS 2 velocity commands (`geometry_msgs/msg/Twist`) to drive the physical or simulated robots.
 
+For the full **rqt_graph** node/topic view when teleop is started with `ros2 launch roverrobotics_driver mini_2wd_teleop.launch.py`, see [architecture.md — §4 ROS Graph: mini_2wd teleop](architecture.md#4-ros-graph--mini_2wd_teleoplaunchpy).
+
 ---
 
 ## 1. Input Flow Architecture
